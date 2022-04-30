@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator
-from django.contrib.auth.models import User
+
+from users.models import User
 
 class Recipe(models.Model):
     name = models.CharField(max_length=200)
