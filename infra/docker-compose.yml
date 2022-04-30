@@ -12,9 +12,8 @@ services:
       
   pg_admin:
     image: dpage/pgadmin4
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=mikhail@yandex.com
-      - PGADMIN_DEFAULT_PASSWORD=mikhail-food
+    env_file:
+      - ../.env
     ports:
       - "5050:80"
 
