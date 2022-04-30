@@ -11,7 +11,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -24,9 +24,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
+    'users',
     'api',
     'recipes',
-    'users',
 ]
 
 MIDDLEWARE = [
@@ -62,11 +62,25 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
-        'NAME': os.getenv('DB_NAME', default=''),
-        'USER': os.getenv('DB_USERNAME', default=''),
-        'PASSWORD': os.getenv('DB_PASSWORD', default=''),
-        'HOST': os.getenv('DB_HOST', default=''),
-        'PORT': os.getenv('DB_PORT', default=''),
+        'NAME': os.getenv('POSTGRES_DB', default=''),
+        'USER': os.getenv('POSTGRES_USER', default=''),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default=None),
+        'HOST': os.getenv('POSTGRES_HOST', default=None),
+        'PORT': os.getenv('POSTGRES_PORT', default=None),
+    }
+}
+
+DJOSER = {
+    "LOGIN_FIELD": "email",
+    "HIDE_USERS": False,
+    "PERMISSIONS": {
+        "user": ("rest_framework.permissions.IsAuthenticated",),
+        "user_list": ("rest_framework.permissions.AllowAny",)
+    },
+    "SERIALIZERS" : {
+        # 'user_create': 'users.serializers.UserSerializer',
+        'user': 'users.serializers.CustomUserSerializer',
+        'current_user': 'users.serializers.CustomUserSerializer',
     }
 }
 
@@ -79,6 +93,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5,
 }
 
 AUTH_PASSWORD_VALIDATORS = [

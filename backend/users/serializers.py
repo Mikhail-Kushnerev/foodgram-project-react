@@ -1,8 +1,28 @@
+from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
 
 from .models import User
 
-class Login_Serializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('email', 'password')
+        fields = (
+            'email',
+            'username',
+            'first_name',
+            'last_name',
+            'password',
+        )
+
+
+class CustomUserSerializer(serializers.ReadOnlyField):
+    class Meta:
+
+        model = User
+        fields = (
+            'email',
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+        )
