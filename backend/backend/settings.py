@@ -11,7 +11,13 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', 'backend', '127.0.0.1']
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost',
+    'http://backend',
+    'http://127.0.0.1'
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -32,6 +38,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -70,6 +77,12 @@ DATABASES = {
     }
 }
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication', 
+    ),
+}
+
 DJOSER = {
     "LOGIN_FIELD": "email",
     "HIDE_USERS": False,
@@ -78,24 +91,13 @@ DJOSER = {
         "user_list": ("rest_framework.permissions.AllowAny",)
     },
     "SERIALIZERS" : {
-        # 'user_create': 'users.serializers.UserSerializer',
+        'user_create': 'users.serializers.UserSerializer',
         'user': 'users.serializers.CustomUserSerializer',
         'current_user': 'users.serializers.CustomUserSerializer',
     }
 }
 
 AUTH_USER_MODEL = 'users.User'
-
-REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated', 
-    ),
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-    ),
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 5,
-}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -120,6 +122,10 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

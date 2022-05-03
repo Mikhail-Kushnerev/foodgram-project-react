@@ -11,22 +11,18 @@ class Recipe(models.Model):
     is_favorited = models.BooleanField()
     author = models.ForeignKey(
         User,
-        related_name='user',
+        related_name='recipes',
         on_delete=models.CASCADE
     )
-    image = models.ManyToManyField(
-        'Image_of_Recipe',
-        related_name='images',
-        # on_delete=models.CASCADE
-    )
+    image = models.ImageField()
     tag = models.ForeignKey(
         'Tag',
-        related_name='tags',
+        related_name='recipes',
         on_delete=models.CASCADE
     )
     ingredients = models.ManyToManyField(
         'Ingredient',
-        related_name='ingredient',
+        related_name='recipes',
         # on_delete=models.CASCADE
     )
 
@@ -43,13 +39,12 @@ class Amount_of_Ingrediend(models.Model):
     )
 
 
-class Image_of_Recipe(models.Model):
-    ...
-
-
 class Tag(models.Model):
-    name = models.CharField(max_length=200)
-    # color = models.
+    name = models.CharField(
+        max_length=200,
+        unique=True
+    )
+    color = models.CharField(max_length=16)
     slug = models.SlugField(
         max_length=200,
         unique=True
