@@ -33,20 +33,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'last_name',
             'is_subscribed'
         )
-        
-        read_only_fields = (
-            'email',
-            'username',
-            'first_name',
-            'last_name'
-        )
     
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
         return user.follower.filter(author=obj).exists()
-
-
-class SubscriptionSerializer(serializers.ModelSerializer):
-        class Meta:
-            model = Subscription
-            fields = '__all__'

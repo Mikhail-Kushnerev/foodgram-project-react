@@ -48,9 +48,7 @@ class UserViewset(UserViewSet):
 
     @action(
         detail=False,
-        url_name='subscriptions',
         url_path='subscriptions',
-        permission_classes=(IsAuthenticated,),
     )
     def subscriptions(self, request):
         user = request.user
