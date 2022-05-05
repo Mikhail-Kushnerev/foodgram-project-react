@@ -1,10 +1,7 @@
-from asyncore import read
-from django.shortcuts import get_object_or_404
-from rest_framework.fields import CurrentUserDefault 
 from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
 
-from .models import User, Subscription
+from .models import User
 
 
 class UserSerializer(UserCreateSerializer):
@@ -18,7 +15,6 @@ class UserSerializer(UserCreateSerializer):
             'last_name',
             'password',
         )
-        read_only_fields = ('id',)
 
 
 class CustomUserSerializer(serializers.ModelSerializer):

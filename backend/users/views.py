@@ -1,15 +1,13 @@
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
-from .models import User, Subscription
-from .serializers import (
-    CustomUserSerializer
-)
+from .models import Subscription, User
+from .serializers import CustomUserSerializer
 
 
 class UserViewset(UserViewSet):
@@ -64,7 +62,10 @@ class UserViewset(UserViewSet):
                 many=True
             )
             return self.get_paginated_response(serializer.data)
-        serializer = self.get_serializer(queryset, many=True)
+        serializer = self.get_serializer(
+            queryset,
+            many=True
+        )
         return  Response(
             serializer.data,
             status=status.HTTP_200_OK
