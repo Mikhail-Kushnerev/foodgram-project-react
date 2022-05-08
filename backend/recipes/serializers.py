@@ -1,17 +1,18 @@
-import base64
 from django.shortcuts import get_object_or_404
 import webcolors
 
-from PIL import Image
-from io import BytesIO
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
+
+from users.models import User
 
 from .models import (
     Ingredient,
     AmountOfIngrediend,
     Recipe,
-    Tag
+    Tag,
+    Favourite,
+    CartShopping
 )
 from users.serializers import CustomUserSerializer
 
@@ -26,14 +27,6 @@ class Hex2NameColor(serializers.Field):
             raise serializers.ValidationError('Для этого цвета нет имени')
         return data
 
-class Img2Base64(serializers.Field):
-    def to_internal_value(self, data):
-        with open(data, 'rb') as file:
-            data = BytesIO(base64.b64decode(file.read()))
-        # image = Image.open(BytesIO(base64.b64decode(data)))
-        # image = image.save('image.jpeg', 'JPEG')
-        image = Image.open(data)
-        return image
 
 class TagSerializer(serializers.ModelSerializer):
     
@@ -76,6 +69,8 @@ class IngredientForRecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
+    is_favorited = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.SerializerMethodField()
     author = CustomUserSerializer(
         many=False,
         read_only=True
@@ -93,7 +88,25 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = '__all__'
+        read_only_fields = (
+            'is_favorited',
+            'is_in_shopping_cart'
+        )
 
+
+    def get_is_favorited(self, obj):
+        user = self.context.get('request').user
+        return Favourite.objects.filter(
+            user=user,
+            recipe=obj
+        ).exists()
+
+    def get_is_in_shopping_cart(self, obj):
+        user = self.context.get('request').user
+        return CartShopping.objects.filter(
+            user=user,
+            recipe=obj
+        ).exists()
 
     def validate(self, data):
         ingredients = self.initial_data.get('ingredients')
@@ -107,19 +120,18 @@ class RecipeSerializer(serializers.ModelSerializer):
         data['ingredients'] = ingredients
         return data
 
-    def create_ingredients(self, ingredients, recipe):
-        for ingredient in ingredients:
+    def create(self, validated_data):
+        ingredients_data = validated_data.pop('ingredients')
+        recipe = Recipe.objects.create(
+            **validated_data
+        )
+        tags_data = self.initial_data.get('tags')
+        recipe.tags.set(tags_data)
+        for ingredient in ingredients_data:
             AmountOfIngrediend.objects.create(
                 recipe=recipe,
                 ingredient_id=ingredient.get('id'),
                 amount=ingredient.get('amount'),
             )
-
-    def create(self, validated_data):
-        image = validated_data.pop('image')
-        ingredients_data = validated_data.pop('ingredients')
-        recipe = Recipe.objects.create(image=image, **validated_data)
-        tags_data = self.initial_data.get('tags')
-        recipe.tags.set(tags_data)
-        self.create_ingredients(ingredients_data, recipe)
+        recipe.save()
         return recipe

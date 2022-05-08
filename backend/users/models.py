@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-
+from django.db.models.expressions import F
+from django.db.models.query_utils import Q
 
 class User(AbstractUser):
     email = models.EmailField(
@@ -34,6 +35,17 @@ class Subscription(models.Model):
         on_delete=models.CASCADE 
     ) 
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'author'],
+                name='Вы уже подписывались на данного автора!'
+            ),
+            models.CheckConstraint(
+                check=~Q(user=F('author')),
+                name='Подсписываться на себя нельзя!'
+            )
+        ]
 
     def __str__(self): 
-        return f'{self.user} {self.author}'
+        return f'{self.user} – {self.author}'

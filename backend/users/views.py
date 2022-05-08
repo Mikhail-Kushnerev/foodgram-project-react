@@ -7,12 +7,14 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import Subscription, User
-from .serializers import CustomUserSerializer
-
+from .serializers import (
+    CustomUserSerializer,
+    SubscriptionsSerializer
+)
 
 class UserViewset(UserViewSet):
-    queryset = User.objects.all()
-    serializer_class = CustomUserSerializer
+    # queryset = User.objects.all()
+    # serializer_class = CustomUserSerializer
     pagination_class = LimitOffsetPagination
  
     
@@ -33,7 +35,10 @@ class UserViewset(UserViewSet):
                 user=user,
                 author=author
             )
-            serializer = self.get_serializer(subscription.author)
+            serializer = SubscriptionsSerializer(
+                subscription.author,
+                context={'request': request}
+            )
             return Response(
                 serializer.data,
                 status=status.HTTP_201_CREATED
@@ -56,14 +61,16 @@ class UserViewset(UserViewSet):
         )
         queryset = [i.author for i in user.follower.all()]
         page = self.paginate_queryset(queryset)
-        if page:
-            serializer = self.get_serializer(
+        if page is not None:
+            serializer = SubscriptionsSerializer(
                 page,
+                context={'request': request},
                 many=True
             )
             return self.get_paginated_response(serializer.data)
-        serializer = self.get_serializer(
+        serializer = SubscriptionsSerializer(
             queryset,
+            context={'request': request},
             many=True
         )
         return  Response(

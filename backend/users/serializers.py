@@ -2,6 +2,7 @@ from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
 
 from .models import User
+from recipes.models import Recipe
 
 
 class UserSerializer(UserCreateSerializer):
@@ -33,3 +34,47 @@ class CustomUserSerializer(serializers.ModelSerializer):
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
         return user.follower.filter(author=obj).exists()
+
+
+class RecipeUser(serializers.ModelSerializer):
+    class Meta:
+        model  = Recipe
+        fields = (
+            'id',
+            'name',
+            'image',
+            'cooking_time'
+        )
+
+
+class SubscriptionsSerializer(serializers.ModelSerializer):
+    is_subscribed = serializers.SerializerMethodField()
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField()
+    class Meta:
+        model = User
+        fields = (
+            'email',
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'recipes',
+            'is_subscribed',
+            'recipes_count'
+        )
+
+    def get_recipes(self, obj):
+        queryset = Recipe.objects.filter(author=obj)
+        return RecipeUser(
+            queryset,
+            many=True
+        ).data
+
+    def get_is_subscribed(self, obj):
+        user = self.context.get('request').user
+        return user.follower.filter(author=obj).exists()
+
+    def get_recipes_count(self, obj):
+        user = Recipe.objects.filter(author=obj).count()
+        return user

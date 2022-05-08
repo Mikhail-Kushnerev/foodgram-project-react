@@ -23,6 +23,7 @@ services:
       dockerfile: Dockerfile
     restart: always
     volumes:
+      # - data_value:/app/data/
       - static_value:/app/static/
       - media_value:/app/media/
     ports:
@@ -37,14 +38,17 @@ services:
     ports:
       - "80:80"
     volumes:
+      # - ../data/:/var/html/data/
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ../frontend/build:/usr/share/nginx/html/
       - ../docs/:/usr/share/nginx/html/api/docs/
+      # - data_value:/var/html/data/
       - static_value:/var/html/static/
       - media_value:/var/html/media/
     depends_on:
       - backend
 
 volumes:
+  # data_value:
   static_value:
   media_value:
