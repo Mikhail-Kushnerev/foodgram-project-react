@@ -20,11 +20,7 @@ from .serializers import (
 )
 from api.pagination import LimitPageNumberPagination
 from api.filters import (
-    AuthorRecipeFilter,
-    IsFavoritedFilter,
-    IsInShoppingCartFilter,
-    TagsSlugFilter,
-    IngredientSearchFilter
+    UserRecipeFilter
 )
 from api.permissions import UserOrReadOnly
 from users.serializers import RecipeUser
@@ -43,14 +39,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     pagination_class = LimitOffsetPagination
-    filter_backends = (
-        IsFavoritedFilter,
-        IsInShoppingCartFilter,
-        AuthorRecipeFilter,
-        TagsSlugFilter
-    )
-    filterset_fields = ('is_favorited', 'is_in_shopping_cart',
-                        'author', 'tags')
+    filter_class = UserRecipeFilter
+    # filterset_fields = (
+    #     'tags',
+    #     'author',
+    #     'is_favorited',
+    #     'is_in_shopping_cart',
+    # )
     permission_classes = (IsAuthenticated,)
 
     @action(
