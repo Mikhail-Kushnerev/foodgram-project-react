@@ -40,12 +40,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
     pagination_class = LimitOffsetPagination
     filter_class = UserRecipeFilter
-    # filterset_fields = (
-    #     'tags',
-    #     'author',
-    #     'is_favorited',
-    #     'is_in_shopping_cart',
-    # )
     permission_classes = (IsAuthenticated,)
 
     @action(
