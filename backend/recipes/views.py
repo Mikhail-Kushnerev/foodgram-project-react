@@ -20,6 +20,7 @@ from .serializers import (
 )
 from api.pagination import LimitPageNumberPagination
 from api.filters import (
+    IngredientFilter,
     UserRecipeFilter
 )
 from api.permissions import UserOrReadOnly
@@ -33,6 +34,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
+    filter_class = IngredientFilter
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -101,6 +103,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
             recipe=recipe
         ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(
+        detail=False,
+        url_path='download_shopping_cart'
+    )
+    def download_shopping_cart(self, request):
+        ...
 
     def perform_create(self, serializer):
             serializer.save(author=self.request.user)

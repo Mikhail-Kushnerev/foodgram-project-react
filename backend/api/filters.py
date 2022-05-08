@@ -1,8 +1,24 @@
 from django_filters.rest_framework import FilterSet, filters
 
-from recipes.models import Recipe
+from recipes.models import Recipe, Tag, Ingredient
+
+
+class IngredientFilter(FilterSet):
+    name = filters.CharFilter(
+        field_name='name',
+        lookup_expr='istartswith'
+    )
+    class Meta:
+        model = Ingredient
+        fields = ('name',)
+
 
 class UserRecipeFilter(FilterSet):
+    tags = filters.ModelMultipleChoiceFilter(
+        field_name='tags__slug',
+        to_field_name="slug",
+        queryset=Tag.objects.all()
+    )
     is_favorited = filters.BooleanFilter(
         method='filter_is_favorited'
     )
