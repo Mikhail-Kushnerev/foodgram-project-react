@@ -1,8 +1,9 @@
 from djoser.serializers import UserCreateSerializer
+from recipes.models import Recipe
 from rest_framework import serializers
 
+from api.utils import RecipeUser
 from .models import User
-from recipes.models import Recipe
 
 
 class UserSerializer(UserCreateSerializer):
@@ -34,17 +35,6 @@ class CustomUserSerializer(serializers.ModelSerializer):
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
         return user.follower.filter(author=obj).exists()
-
-
-class RecipeUser(serializers.ModelSerializer):
-    class Meta:
-        model  = Recipe
-        fields = (
-            'id',
-            'name',
-            'image',
-            'cooking_time'
-        )
 
 
 class SubscriptionsSerializer(serializers.ModelSerializer):

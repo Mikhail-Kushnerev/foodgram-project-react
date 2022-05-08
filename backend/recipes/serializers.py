@@ -1,31 +1,17 @@
 from django.shortcuts import get_object_or_404
-import webcolors
-
-from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
+from rest_framework import serializers
 
-from users.models import User
-
-from .models import (
-    Ingredient,
-    AmountOfIngrediend,
-    Recipe,
-    Tag,
-    Favourite,
-    CartShopping
-)
+from api.utils import Hex2NameColor
 from users.serializers import CustomUserSerializer
-
-class Hex2NameColor(serializers.Field):
-    def to_representation(self, value):
-        return value
-    
-    def to_internal_value(self, data):
-        try:
-            data = webcolors.hex_to_name(data)
-        except ValueError:
-            raise serializers.ValidationError('Для этого цвета нет имени')
-        return data
+from .models import (
+    AmountOfIngrediend,
+    CartShopping,
+    Favourite,
+    Ingredient,
+    Recipe,
+    Tag
+)
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -122,9 +108,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         ingredients_data = validated_data.pop('ingredients')
-        recipe = Recipe.objects.create(
-            **validated_data
-        )
+        recipe = Recipe.objects.create(**validated_data)
         tags_data = self.initial_data.get('tags')
         recipe.tags.set(tags_data)
         for ingredient in ingredients_data:

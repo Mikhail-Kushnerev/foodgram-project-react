@@ -1,30 +1,35 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
-from rest_framework.response import Response
-from rest_framework import status
+from django.http import HttpResponse
+from rest_framework import (
+    status,
+    viewsets
+)
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from users.serializers import RecipeUser
 
+from api.filters import (
+    IngredientFilter,
+    UserRecipeFilter
+)
+from api.pagination import LimitPageNumberPagination
+from api.permissions import UserOrReadOnly
 from .models import (
-    Favourite,
+    AmountOfIngrediend,
     CartShopping,
+    Favourite,
     Ingredient,
     Recipe,
     Tag
 )
 from .serializers import (
     IngredientSerializer,
-    TagSerializer,
-    RecipeSerializer
+    RecipeSerializer,
+    TagSerializer
 )
-from api.pagination import LimitPageNumberPagination
-from api.filters import (
-    IngredientFilter,
-    UserRecipeFilter
-)
-from api.permissions import UserOrReadOnly
-from users.serializers import RecipeUser
+
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
@@ -109,7 +114,26 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_path='download_shopping_cart'
     )
     def download_shopping_cart(self, request):
-        ...
-
+        unit_sum_dict = {}
+        user = request.user
+        cart_list = AmountOfIngrediend.objects.filter(
+            recipe__cart_shoppings__user=user
+        ).values_list(
+            'ingredient__name',
+            'ingredient__measurement_unit',
+            'amount'
+        )
+        for item in cart_list:
+            unit_sum_dict[cart_list[0]] = {
+                'ед. изм.': cart_list[1],
+                'кол-во': cart_list[2],
+            }
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = (
+            'attachment; '
+            'filename="cart_list.pdf"'
+        )
+        response.write(u'\ufeff'.encode('utf8'))
+        # writer = csv.writer(response, delimiter=';')
     def perform_create(self, serializer):
             serializer.save(author=self.request.user)

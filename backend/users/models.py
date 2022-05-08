@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models.expressions import F
 from django.db.models.query_utils import Q
 
+
 class User(AbstractUser):
     email = models.EmailField(
         max_length=254,

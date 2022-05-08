@@ -7,10 +7,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import Subscription, User
-from .serializers import (
-    CustomUserSerializer,
-    SubscriptionsSerializer
-)
+from .serializers import CustomUserSerializer, SubscriptionsSerializer
+
 
 class UserViewset(UserViewSet):
     # queryset = User.objects.all()
