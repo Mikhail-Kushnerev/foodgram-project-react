@@ -4,19 +4,15 @@ from rest_framework import serializers
 
 from api.utils import Hex2NameColor
 from users.serializers import CustomUserSerializer
-from .models import (
-    AmountOfIngrediend,
-    CartShopping,
-    Favourite,
-    Ingredient,
-    Recipe,
-    Tag
-)
+
+from .models import (AmountOfIngrediend, CartShopping, Favourite, Ingredient,
+                     Recipe, Tag)
 
 
 class TagSerializer(serializers.ModelSerializer):
-    
+
     color = Hex2NameColor()
+
     class Meta:
         model = Tag
         fields = '__all__'
@@ -30,7 +26,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class IngredientForRecipeSerializer(serializers.ModelSerializer):
-    
+
     id = serializers.ReadOnlyField(
         source='ingredient.id',
         read_only=True
@@ -71,15 +67,14 @@ class RecipeSerializer(serializers.ModelSerializer):
         many=True,
         read_only=True,
     )
+
     class Meta:
         model = Recipe
         fields = '__all__'
         read_only_fields = (
             'is_favorited',
             'is_in_shopping_cart',
-            # 'ingredients'
         )
-
 
     def get_is_favorited(self, obj):
         user = self.context.get('request').user
@@ -100,7 +95,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         ).exists()
 
     def validate(self, data):
-        
+
         ingredients = self.initial_data.get('ingredients')
         ingredient_list = []
         for ingredient_item in ingredients:

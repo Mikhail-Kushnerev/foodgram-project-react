@@ -25,16 +25,16 @@ class User(AbstractUser):
 
 
 class Subscription(models.Model):
-    user = models.ForeignKey( 
-        User, 
-        related_name='follower', 
-        on_delete=models.CASCADE 
-    ) 
-    author = models.ForeignKey( 
-        User, 
-        related_name='following', 
-        on_delete=models.CASCADE 
-    ) 
+    user = models.ForeignKey(
+        User,
+        related_name='follower',
+        on_delete=models.CASCADE
+    )
+    author = models.ForeignKey(
+        User,
+        related_name='following',
+        on_delete=models.CASCADE
+    )
 
     class Meta:
         constraints = [
@@ -48,5 +48,5 @@ class Subscription(models.Model):
             )
         ]
 
-    def __str__(self): 
-        return f'{self.user} – {self.author}'
+    def __str__(self):
+        return f'{self.user.first_name} подписан на {self.author.first_name}'

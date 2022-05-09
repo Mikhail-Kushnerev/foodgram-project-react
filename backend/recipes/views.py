@@ -1,44 +1,25 @@
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
-from rest_framework import (
-    status,
-    viewsets
-)
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from users.serializers import RecipeUser
-from api.filters import (
-    IngredientFilter,
-    UserRecipeFilter
-)
+from api.filters import IngredientFilter, UserRecipeFilter
 from api.pagination import LimitPageNumberPagination
-from api.permissions import (
-    IsOwnerOrReadOnly,
-    IsAdminOrReadOnly
-)
-from .models import (
-    AmountOfIngrediend,
-    CartShopping,
-    Favourite,
-    Ingredient,
-    Recipe,
-    Tag
-)
-from .serializers import (
-    IngredientSerializer,
-    RecipeSerializer,
-    TagSerializer
-)
+from api.permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
+from api.utils import download_page
+from users.serializers import RecipeUser
+
+from .models import (AmountOfIngrediend, CartShopping, Favourite, Ingredient,
+                     Recipe, Tag)
+from .serializers import IngredientSerializer, RecipeSerializer, TagSerializer
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = (IsAdminOrReadOnly,)
-    
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
@@ -53,7 +34,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
     pagination_class = LimitOffsetPagination
     filter_class = UserRecipeFilter
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = (IsAuthorOrReadOnly,)
 
     @action(
         methods=['post', 'delete'],
@@ -117,7 +98,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=False,
-        url_path='download_shopping_cart'
+        url_path='download_shopping_cart',
+        permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
         unit_sum_dict = {}
@@ -130,20 +112,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'amount'
         )
         for item in cart_list:
-            unit_sum_dict[item[0]] = {
-                'ед. изм.': item[1],
-                'кол-во': item[2],
-            }
-        response = HttpResponse(
-            unit_sum_dict,
-            content_type='application/txt'
-        )
-        response['Content-Disposition'] = (
-            'attachment; '
-            'filename="cart_list.txt"'
-        )
-        response.write(u'\ufeff'.encode('utf8'))
-        return response
-        # writer = csv.writer(response, delimiter=';')
+            name = item[0]
+            if name not in unit_sum_dict:
+                unit_sum_dict[name] = {
+                    'measurement_unit': item[1],
+                    'amount': item[2]
+                }
+            else:
+                unit_sum_dict[name]['amount'] += item[2]
+        return download_page(unit_sum_dict)
+
     def perform_create(self, serializer):
-            serializer.save(author=self.request.user)
+        serializer.save(author=self.request.user)

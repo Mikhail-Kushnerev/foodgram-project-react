@@ -14,8 +14,9 @@
 - Python;
 - Django-Rest-Framework;
 - Recat;
+- Gunicorn;
 - Docker/Docker-compose;
-- Nginx
+- Nginx;
 - Yandex.Cloud.
 
 [Оглавление](#оглавление)

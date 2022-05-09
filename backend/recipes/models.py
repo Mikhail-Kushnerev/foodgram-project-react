@@ -1,7 +1,5 @@
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models.expressions import F
-from django.db.models.query_utils import Q
 
 from users.models import User
 
@@ -43,6 +41,7 @@ class Recipe(models.Model):
         return self.text[:100]
     get_text.short_description = "Описание"
 
+
 class Ingredient(models.Model):
     name = models.CharField(
         max_length=200
@@ -57,36 +56,64 @@ class Ingredient(models.Model):
     def __str__(self):
         return self.name
 
+
 class AmountOfIngrediend(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
-        on_delete=models.CASCADE,
-        # related_name='amount_of_ingrediends'
+        on_delete=models.CASCADE
     )
     recipe = models.ForeignKey(
         Recipe,
-        on_delete=models.CASCADE,
-        # related_name='amount_of_ingrediends'
+        on_delete=models.CASCADE
     )
     amount = models.IntegerField(
         default=1,
         validators=(MinValueValidator(1),),
     )
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=('ingredient', 'recipe'),
+                name='Использовать один ингредиент более 1-го раза нельзя!'
+            )
+        ]
+
     def __str__(self):
         return self.recipe.name
 
 
 class Tag(models.Model):
+    ORANGE = '#FFA500'
+    GREEN = '#008000'
+    BLUE = '#0000FF'
+
+    COLOR_CHOICES = [
+        (ORANGE, 'Оранжевый'),
+        (GREEN, 'Зеленый'),
+        (BLUE, 'Синий'),
+    ]
     name = models.CharField(
         max_length=200,
         unique=True
     )
-    color = models.CharField(max_length=16)
+    color = models.CharField(
+        max_length=16,
+        unique=True,
+        choices=COLOR_CHOICES
+    )
     slug = models.SlugField(
         max_length=200,
         unique=True
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=('name', 'slug'),
+                name='Поле <slug> должно не повторять поле <name>!'
+            )
+        ]
 
     def __str__(self):
         return self.name
@@ -112,6 +139,7 @@ class Favourite(models.Model):
             )
         ]
 
+
 class CartShopping(models.Model):
     user = models.ForeignKey(
         User,
@@ -123,6 +151,14 @@ class CartShopping(models.Model):
         on_delete=models.CASCADE,
         related_name='cart_shoppings'
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=('user', 'recipe'),
+                name='Рецепт уже находится в корзине!'
+            )
+        ]
 
     def __str__(self) -> str:
         return self.recipe.name

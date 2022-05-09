@@ -14,8 +14,7 @@ class UserViewset(UserViewSet):
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
     pagination_class = LimitOffsetPagination
- 
-    
+
     @action(
         methods=['post', 'delete'],
         detail=True,
@@ -54,8 +53,8 @@ class UserViewset(UserViewSet):
     )
     def subscriptions(self, request):
         user = request.user
-        user = get_object_or_404( 
-            User, 
+        user = get_object_or_404(
+            User,
             id=user.id
         )
         queryset = [i.author for i in user.follower.all()]
@@ -72,7 +71,7 @@ class UserViewset(UserViewSet):
             many=True,
             context={'request': request},
         )
-        return  Response(
+        return Response(
             serializer.data,
             status=status.HTTP_200_OK
         )

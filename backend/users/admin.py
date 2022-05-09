@@ -11,6 +11,10 @@ class CustomUserAdmin(admin.ModelAdmin):
         'last_name',
         'first_name'
     )
+    search_fields = ('username',)
+    list_filter = ('email',)
+    list_per_page = 20
+
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
@@ -18,3 +22,4 @@ class SubscriptionAdmin(admin.ModelAdmin):
         'author',
         'user',
     )
+    list_per_page = 20
