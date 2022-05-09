@@ -39,6 +39,10 @@ class Recipe(models.Model):
     def __str__(self) -> str:
         return self.name
 
+    def get_text(self):
+        return self.text[:100]
+    get_text.short_description = "Описание"
+
 class Ingredient(models.Model):
     name = models.CharField(
         max_length=200
@@ -57,12 +61,12 @@ class AmountOfIngrediend(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        related_name='amount_of_ingrediends'
+        # related_name='amount_of_ingrediends'
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='amount_of_ingrediends'
+        # related_name='amount_of_ingrediends'
     )
     amount = models.IntegerField(
         default=1,
@@ -119,3 +123,6 @@ class CartShopping(models.Model):
         on_delete=models.CASCADE,
         related_name='cart_shoppings'
     )
+
+    def __str__(self) -> str:
+        return self.recipe.name

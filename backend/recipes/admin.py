@@ -50,6 +50,7 @@ class RecipeAdmin(admin.ModelAdmin):
         'author',
         'name',
         'preview',
+        'get_text',
         'favorites_count'
     )
     list_filter = (
@@ -59,6 +60,7 @@ class RecipeAdmin(admin.ModelAdmin):
     )
     search_fields = (
         'name',
+        'text'
     )
     ordering = (
         'author',
@@ -88,7 +90,13 @@ class FavouriteAdmin(admin.ModelAdmin):
 
 @admin.register(AmountOfIngrediend)
 class AmountOfIngrediendAdmin(admin.ModelAdmin):
-    # list_filter = ('recipe',)
+    list_display = (
+        'recipe',
+        'ingredient',
+        'amount'
+    )
+    list_editable = ('amount',)
+    list_filter = ('recipe',)
     ordering = ['-recipe']
     list_per_page = 20
 

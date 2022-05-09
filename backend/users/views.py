@@ -11,8 +11,8 @@ from .serializers import CustomUserSerializer, SubscriptionsSerializer
 
 
 class UserViewset(UserViewSet):
-    # queryset = User.objects.all()
-    # serializer_class = CustomUserSerializer
+    queryset = User.objects.all()
+    serializer_class = CustomUserSerializer
     pagination_class = LimitOffsetPagination
  
     
