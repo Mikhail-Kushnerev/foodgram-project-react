@@ -2,6 +2,7 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models.expressions import F
 from django.db.models.query_utils import Q
+
 from users.models import User
 
 
@@ -56,17 +57,20 @@ class AmountOfIngrediend(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        # related_name='amount_of_ingrediends'
+        related_name='amount_of_ingrediends'
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        # related_name='amount_of_ingrediends'
+        related_name='amount_of_ingrediends'
     )
     amount = models.IntegerField(
         default=1,
         validators=(MinValueValidator(1),),
     )
+
+    def __str__(self):
+        return self.recipe.name
 
 
 class Tag(models.Model):
@@ -79,6 +83,9 @@ class Tag(models.Model):
         max_length=200,
         unique=True
     )
+
+    def __str__(self):
+        return self.name
 
 
 class Favourite(models.Model):

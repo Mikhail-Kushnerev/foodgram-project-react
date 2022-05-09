@@ -50,6 +50,7 @@ class UserViewset(UserViewSet):
     @action(
         detail=False,
         url_path='subscriptions',
+        permission_classes=(IsAuthenticated,),
     )
     def subscriptions(self, request):
         user = request.user
@@ -62,14 +63,14 @@ class UserViewset(UserViewSet):
         if page is not None:
             serializer = SubscriptionsSerializer(
                 page,
+                many=True,
                 context={'request': request},
-                many=True
             )
             return self.get_paginated_response(serializer.data)
         serializer = SubscriptionsSerializer(
             queryset,
+            many=True,
             context={'request': request},
-            many=True
         )
         return  Response(
             serializer.data,

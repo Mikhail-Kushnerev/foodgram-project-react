@@ -8,14 +8,17 @@ from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from users.serializers import RecipeUser
 
+from users.serializers import RecipeUser
 from api.filters import (
     IngredientFilter,
     UserRecipeFilter
 )
 from api.pagination import LimitPageNumberPagination
-from api.permissions import UserOrReadOnly
+from api.permissions import (
+    IsOwnerOrReadOnly,
+    IsAdminOrReadOnly
+)
 from .models import (
     AmountOfIngrediend,
     CartShopping,
@@ -34,12 +37,15 @@ from .serializers import (
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+    
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     filter_class = IngredientFilter
+    permission_classes = (IsAdminOrReadOnly,)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -47,13 +53,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
     pagination_class = LimitOffsetPagination
     filter_class = UserRecipeFilter
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsOwnerOrReadOnly]
 
     @action(
         methods=['post', 'delete'],
         detail=True,
         url_path='favorite',
-        permission_classes=(UserOrReadOnly,)
+        permission_classes=(IsAuthenticated,)
     )
     def favorite(self, request, pk=None):
         user = request.user
@@ -83,7 +89,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         methods=['post', 'delete'],
         detail=True,
         url_path='shopping_cart',
-        permission_classes=(UserOrReadOnly,)
+        permission_classes=(IsAuthenticated,)
     )
     def shopping_cart(self, request, pk=None):
         user = request.user
@@ -124,16 +130,20 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'amount'
         )
         for item in cart_list:
-            unit_sum_dict[cart_list[0]] = {
-                'ед. изм.': cart_list[1],
-                'кол-во': cart_list[2],
+            unit_sum_dict[item[0]] = {
+                'ед. изм.': item[1],
+                'кол-во': item[2],
             }
-        response = HttpResponse(content_type='application/pdf')
+        response = HttpResponse(
+            unit_sum_dict,
+            content_type='application/txt'
+        )
         response['Content-Disposition'] = (
             'attachment; '
-            'filename="cart_list.pdf"'
+            'filename="cart_list.txt"'
         )
         response.write(u'\ufeff'.encode('utf8'))
+        return response
         # writer = csv.writer(response, delimiter=';')
     def perform_create(self, serializer):
             serializer.save(author=self.request.user)
