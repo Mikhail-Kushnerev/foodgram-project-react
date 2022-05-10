@@ -60,7 +60,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_NAME }}
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_NAME }}:v1.0.1
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_NAME_FRONTEND }}:latest
             sudo docker-compose stop
             sudo docker-compose rm backend
