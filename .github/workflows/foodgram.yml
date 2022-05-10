@@ -74,4 +74,4 @@ jobs:
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
             echo DB_ADMIN_PASSWORD=${{ secrets.PGADMIN_DEFAULT_PASSWORD }} >> .env
             echo DB_ADMIN=${{ secrets.PGADMIN_DEFAULT_EMAIL }} >> .env
-            sudo docker-compose up -d --build
+            sudo docker-compose up -d
