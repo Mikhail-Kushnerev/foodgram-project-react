@@ -97,6 +97,15 @@ class RecipeSerializer(serializers.ModelSerializer):
     def validate(self, data):
 
         ingredients = self.initial_data.get('ingredients')
+        user = self.context['request'].user
+        name = data['name']
+        if Recipe.objects.filter(
+            author=user.id,
+            name=name
+        ).exists():
+            raise serializers.ValidationError(
+                    'Такой рецепт уже создавался Вами'
+                )
         ingredient_list = []
         for ingredient_item in ingredients:
             ingredient = get_object_or_404(
