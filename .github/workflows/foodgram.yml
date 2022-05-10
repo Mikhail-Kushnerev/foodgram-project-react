@@ -46,14 +46,6 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_NAME }}:v1.0.1
 
-      - name: Push frontend to Docker Hub
-        uses: docker/build-push-action@v2
-        with:
-          context: ./frontend
-          file: ./frontend/Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_NAME_FRONTEND }}:latest
-
   deploy:
     name: Deploy on Server
     runs-on: ubuntu-latest
@@ -69,8 +61,10 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_NAME }}
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_NAME_FRONTEND }}
             sudo docker-compose stop
             sudo docker-compose rm backend
+            rm .env
             touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} > .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
