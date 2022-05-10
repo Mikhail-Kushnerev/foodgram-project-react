@@ -10,12 +10,12 @@ services:
     env_file:
       - ./.env
       
-  # pg_admin:
-  #   image: dpage/pgadmin4
-  #   env_file:
-  #     - ../.env
-  #   ports:
-  #     - "5050:80"
+  pg_admin:
+    image: dpage/pgadmin4
+    env_file:
+      - ./.env
+    ports:
+      - "5050:80"
 
   backend:
     build:
@@ -30,8 +30,8 @@ services:
       - "8000:8000"
     depends_on:
       - db
-    # env_file:
-    #   - ../.env
+    env_file:
+      - ./.env
   
   nginx:
     image: nginx:1.19.3
