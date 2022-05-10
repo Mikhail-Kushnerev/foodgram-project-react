@@ -1,5 +1,6 @@
 name: foodgram
 
+on:
   push:
     paths-ignore:
       - '**/README.md'
