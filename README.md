@@ -32,14 +32,12 @@
 
 [Оглавление](#оглавление)
 
-## Установка
-
-- Для локального развёртывания склонируйте репозиторий
-
 <details>
   <summary>
-    <h2 id="structure"> Структура проекта </h2>
+    <h2 id="structure"> Установка </h2>
   </summary>
+
+### Структура проекта:
 
 ```cmd
 |   .env
@@ -133,7 +131,10 @@ https://github.com/Mikhail-Kushnerev/foodgram-project-react/
 docker-compose up -d
 ```
 
-- В контейнере **backend** выполните миграции, установите **superuser** и заполните БД исходными данными:
+- В контейнере **backend**:
+    - выполните миграции;
+    - установите **superuser**;
+    - заполните БД исходными данными:
 
 ```py
 docker-compose exec backend python manage.py migrate
