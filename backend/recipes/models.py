@@ -84,14 +84,14 @@ class AmountOfIngrediend(models.Model):
 
 
 class Tag(models.Model):
-    ORANGE = '#FFA500'
-    GREEN = '#008000'
-    BLUE = '#0000FF'
+    ORANGE = '#E26C2D'
+    GREEN = '#49B64E'
+    PURPLE = '#8775D2'
 
     COLOR_CHOICES = [
         (ORANGE, 'Оранжевый'),
         (GREEN, 'Зеленый'),
-        (BLUE, 'Синий'),
+        (PURPLE, 'Синий'),
     ]
     name = models.CharField(
         max_length=200,
