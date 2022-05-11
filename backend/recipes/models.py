@@ -90,7 +90,7 @@ class Tag(models.Model):
     COLOR_CHOICES = [
         (ORANGE, 'Оранжевый'),
         (GREEN, 'Зеленый'),
-        (PURPLE, 'Синий'),
+        (PURPLE, 'Фиолетовый'),
     ]
     name = models.CharField(
         max_length=200,
