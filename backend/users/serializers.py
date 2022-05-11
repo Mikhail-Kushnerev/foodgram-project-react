@@ -3,7 +3,6 @@ from rest_framework import serializers
 
 from api.utils import RecipeUser
 from recipes.models import Recipe
-
 from .models import User
 
 
