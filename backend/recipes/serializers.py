@@ -104,8 +104,8 @@ class RecipeSerializer(serializers.ModelSerializer):
             name=name
         ).exists():
             raise serializers.ValidationError(
-                    'Такой рецепт уже создавался Вами'
-                )
+                'Такой рецепт уже создавался Вами'
+            )
         ingredient_list = []
         for ingredient_item in ingredients:
             ingredient = get_object_or_404(
