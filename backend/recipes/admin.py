@@ -64,7 +64,6 @@ class RecipeAdmin(admin.ModelAdmin):
 class FavouriteAdmin(admin.ModelAdmin):
     list_display = (
         'user',
-        'recipe'
     )
     list_filter = (
         'user',
