@@ -11,13 +11,10 @@ SECRET_KEY = os.getenv('SECRET_KEY', default='123456789abcdefg')
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'backend', '127.0.0.1', '51.250.104.248']
+ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost',
-    'http://backend',
-    'http://127.0.0.1'
-    'http://51.250.104.248'
+    '51.250.104.248'
 ]
 
 INSTALLED_APPS = [
