@@ -31,7 +31,7 @@ class Recipe(models.Model):
                 name='Такой рецепт уже создавался Вами!'
             )
         ]
-        ordering = ['name']
+        ordering = ['-id']
 
     def __str__(self) -> str:
         return self.name

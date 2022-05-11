@@ -2,6 +2,16 @@
 
 Досупен по [ссылке](http://51.250.104.248/recipes)
 
+<details>
+  <summary> Админка </summary>
+
+```py
+email: muxa@yandex.ru
+password: muxa
+```
+
+</details>
+
 ## Оглавление
 
 - [Технологии](#технологии)
@@ -19,7 +29,7 @@
 - Nginx;
 - Yandex.Cloud.
 
-[Оглавление](#оглавление)
+[⬆️Оглавление](#оглавление)
 
 ## Описание
 
@@ -30,7 +40,7 @@
 - добавлять понравившиеся рецепты в список «Избранное»;
 - перед походом в магазин скачивать сводный список продуктов.
 
-[Оглавление](#оглавление)
+[⬆️Оглавление](#оглавление)
 
 <details>
   <summary>
@@ -142,11 +152,11 @@ docker-compose exec backend python manage.py createsuperuser
 docker-compose exec backend python manage.py runscript load_ing_data
 ```
 
-[Оглавление](#оглавление)
+[⬆️Оглавление](#оглавление)
 
 </details>
 
 ## Автор
 
 [Mikhail Kushnerev](https://github.com/Mikhail-Kushnerev)  
-[В начало](#оглавление)
+[⬆️В начало](#оглавление)
