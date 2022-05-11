@@ -39,7 +39,6 @@ class RecipeAdmin(admin.ModelAdmin):
         'favorites_count'
     )
     list_filter = (
-        'name',
         'author',
         'tags'
     )
@@ -64,10 +63,10 @@ class RecipeAdmin(admin.ModelAdmin):
 class FavouriteAdmin(admin.ModelAdmin):
     list_display = (
         'user',
+        'recipe'
     )
     list_filter = (
         'user',
-        'recipe'
     )
     search_fields = ('recipe',)
     list_per_page = 20
@@ -81,7 +80,7 @@ class AmountOfIngrediendAdmin(admin.ModelAdmin):
         'amount'
     )
     list_editable = ('amount',)
-    list_filter = ('recipe',)
+    list_filter = ('recipe__author',)
     ordering = ['-recipe']
     list_per_page = 20
 
