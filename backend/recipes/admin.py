@@ -1,6 +1,7 @@
-from api.utils import IngredientFilter
 from django.contrib import admin
 from django.utils.safestring import mark_safe
+
+from api.utils import IngredientFilter
 
 from .models import (AmountOfIngrediend, CartShopping, Favourite, Ingredient,
                      Recipe, Tag)
