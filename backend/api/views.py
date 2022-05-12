@@ -1,11 +1,10 @@
 from django.shortcuts import get_object_or_404
+from recipes.models import (AmountOfIngrediend, CartShopping, Favourite,
+                            Ingredient, Recipe, Tag)
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-
-from recipes.models import (AmountOfIngrediend, CartShopping, Favourite,
-                            Ingredient, Recipe, Tag)
 from users.serializers import RecipeUser
 
 from .filters import IngredientFilter, UserRecipeFilter

@@ -1,12 +1,11 @@
 import webcolors
 from django.contrib import admin
 from django.http import HttpResponse
+from recipes.models import Recipe
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from rest_framework import serializers
-
-from recipes.models import Recipe
 
 
 class Hex2NameColor(serializers.Field):
