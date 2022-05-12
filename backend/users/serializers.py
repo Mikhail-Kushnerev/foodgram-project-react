@@ -1,8 +1,7 @@
-from djoser.serializers import UserCreateSerializer
-from rest_framework import serializers
-
 from api.utils import RecipeUser
+from djoser.serializers import UserCreateSerializer
 from recipes.models import Recipe
+from rest_framework import serializers
 
 from .models import User
 
