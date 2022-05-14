@@ -46,7 +46,7 @@ class UserRecipeFilter(FilterSet):
         return queryset
 
 
-class IngredientFilter(admin.SimpleListFilter):
+class IngredientFilterAdmin(admin.SimpleListFilter):
 
     title = 'Ингредиенты'
     parameter_name = 'ингредиенты_категории'

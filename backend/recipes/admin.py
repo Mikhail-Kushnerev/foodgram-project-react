@@ -1,4 +1,4 @@
-from api.filters import IngredientFilter
+from api.filters import IngredientFilterAdmin
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
@@ -24,7 +24,7 @@ class IngredientAdmin(admin.ModelAdmin):
         'name',
         'measurement_unit'
     )
-    list_filter = (IngredientFilter,)
+    list_filter = (IngredientFilterAdmin,)
     ordering = ('name',)
     list_per_page = 20
 
