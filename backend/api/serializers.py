@@ -97,11 +97,6 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class IngredientSerializer(serializers.ModelSerializer):
-    name = serializers.SerializerMethodField()
-    measurement_unit = serializers.SlugRelatedField(
-        slug_field='name',
-        read_only=True
-    )
 
     class Meta:
         model = Ingredient
@@ -140,15 +135,9 @@ class RecipeSerializer(serializers.ModelSerializer):
         queryset=Tag.objects.all(),
         many=True,
     )
-    # tags = TagSerializer(
-    #     # queryset=Tag.objects.all(),
-    #     # read_only=True,
-    #     many=True,
-    # )
     image = Base64ImageField()
     ingredients = IngredientForRecipeCreate(
         source='amountofingrediend_set',
-        # read_only=True,
         many=True
     )
 
@@ -175,7 +164,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         ).exists()
 
     def validate(self, data):
-        print(data)
         ingredients = data.pop('amountofingrediend_set')
         ingredient_list = []
         for ingredient_item in ingredients:
@@ -193,7 +181,6 @@ class RecipeSerializer(serializers.ModelSerializer):
                     'Убедитесь, что значение количества ингредиента больше 0'
                 )
         data['ingredients'] = ingredients
-        print(data)
         return data
 
     def add_ingredients(self, ingredients, recipe):
