@@ -6,17 +6,17 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from users.models import Subscription, User
 from recipes.models import (AmountOfIngrediend, CartShopping, Favourite,
                             Ingredient, Recipe, Tag)
-from .utils import add_or_delete
+from users.models import Subscription, User
+
 from .filters import IngredientFilter, UserRecipeFilter
 from .pagination import PageNumberPagination
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
 from .serializers import (CustomUserSerializer, IngredientSerializer,
                           RecipeSerializer, RecipeSerializerGet,
                           SubscriptionsSerializer, TagSerializer)
-from .utils import download_page
+from .utils import add_or_delete, download_page
 
 
 class UserViewset(UserViewSet):
@@ -135,7 +135,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
-        unit_sum_dict = {}
         user = request.user
         cart_list = AmountOfIngrediend.objects.filter(
             recipe__cart_shoppings__user=user

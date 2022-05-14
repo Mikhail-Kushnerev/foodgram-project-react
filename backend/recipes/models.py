@@ -1,5 +1,6 @@
 from django.core.validators import MinValueValidator
 from django.db import models
+
 from users.models import User
 
 
@@ -62,8 +63,8 @@ class Ingredient(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name='Ингридиент'
-        verbose_name_plural='Ингридиент'
+        verbose_name = 'Ингридиент'
+        verbose_name_plural = 'Ингридиент'
 
     def __str__(self):
         return self.name
@@ -93,8 +94,8 @@ class AmountOfIngrediend(models.Model):
                 name='Использовать один ингредиент более 1-го раза нельзя!'
             )
         ]
-        verbose_name='Ингридиент рецепта'
-        verbose_name_plural='Ингридиенты рецепта'
+        verbose_name = 'Ингридиент рецепта'
+        verbose_name_plural = 'Ингридиенты рецепта'
 
     def __str__(self):
         return self.recipe.name
@@ -134,8 +135,8 @@ class Tag(models.Model):
                 name='Поле <slug> должно не повторять поле <name>!'
             )
         ]
-        verbose_name='Tэг'
-        verbose_name_plural='Tэги'
+        verbose_name = 'Tэг'
+        verbose_name_plural = 'Tэги'
 
     def __str__(self):
         return self.name
@@ -162,8 +163,8 @@ class Favourite(models.Model):
                 name='Рецепт уже находится в избранном!'
             )
         ]
-        verbose_name='Категория "Избранное"'
-        verbose_name_plural='Категория "Избранные"'
+        verbose_name = 'Категория "Избранное"'
+        verbose_name_plural = 'Категория "Избранные"'
 
 
 class CartShopping(models.Model):
@@ -187,8 +188,8 @@ class CartShopping(models.Model):
                 name='Рецепт уже находится в корзине!'
             )
         ]
-        verbose_name='Ингридиент в корзине'
-        verbose_name_plural='Ингридиенты в корзине'
+        verbose_name = 'Ингридиент в корзине'
+        verbose_name_plural = 'Ингридиенты в корзине'
 
     def __str__(self) -> str:
         return self.recipe.name

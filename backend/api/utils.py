@@ -1,13 +1,14 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from rest_framework.response import Response
-from rest_framework import status
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
+from rest_framework import status
+from rest_framework.response import Response
+
+from recipes.models import Recipe
 
 from .serializers import RecipeUser
-from recipes.models import Recipe
 
 
 def download_page(cart_list):
