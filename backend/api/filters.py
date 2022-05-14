@@ -1,17 +1,11 @@
 from django.contrib import admin
 from django_filters.rest_framework import FilterSet, filters
-from recipes.models import Ingredient, Recipe, Tag
+from rest_framework.filters import SearchFilter
+from recipes.models import Recipe, Tag
 
 
-class IngredientFilter(FilterSet):
-    name = filters.CharFilter(
-        field_name='name',
-        lookup_expr='istartswith'
-    )
-
-    class Meta:
-        model = Ingredient
-        fields = ('name',)
+class IngredientFilter(SearchFilter):
+    search_param = 'name'
 
 
 class UserRecipeFilter(FilterSet):
