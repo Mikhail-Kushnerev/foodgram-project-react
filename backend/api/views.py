@@ -1,19 +1,20 @@
+from django.db.models import Sum
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-from recipes.models import (AmountOfIngrediend, CartShopping, Favourite,
-                            Ingredient, Recipe, Tag)
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-# from .serializers import CustomUserSerializer, SubscriptionsSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from users.models import Subscription, User
 
+from users.models import Subscription, User
+from recipes.models import (AmountOfIngrediend, CartShopping, Favourite,
+                            Ingredient, Recipe, Tag)
+from .utils import add_or_delete
 from .filters import IngredientFilter, UserRecipeFilter
 from .pagination import PageNumberPagination
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
 from .serializers import (CustomUserSerializer, IngredientSerializer,
-                          RecipeSerializer, RecipeSerializerGet, RecipeUser,
+                          RecipeSerializer, RecipeSerializerGet,
                           SubscriptionsSerializer, TagSerializer)
 from .utils import download_page
 
@@ -117,28 +118,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def favorite(self, request, pk=None):
-        user = request.user
-        recipe = get_object_or_404(
-            Recipe,
-            id=self.kwargs.get('pk')
-        )
-        if request.method == 'POST':
-            favorite_recipe = Favourite.objects.create(
-                user=user,
-                recipe=recipe
-            )
-            serializer = RecipeUser(
-                favorite_recipe.recipe
-            )
-            return Response(
-                serializer.data,
-                status=status.HTTP_201_CREATED
-            )
-        Favourite.objects.filter(
-            user=user,
-            recipe=recipe
-        ).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return add_or_delete(request, Favourite, pk)
 
     @action(
         methods=['post', 'delete'],
@@ -147,28 +127,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def shopping_cart(self, request, pk=None):
-        user = request.user
-        recipe = get_object_or_404(
-            Recipe,
-            id=self.kwargs.get('pk')
-        )
-        if request.method == 'POST':
-            cart_recipes = CartShopping.objects.create(
-                user=user,
-                recipe=recipe
-            )
-            serializer = RecipeUser(
-                cart_recipes.recipe,
-            )
-            return Response(
-                serializer.data,
-                status=status.HTTP_201_CREATED
-            )
-        CartShopping.objects.filter(
-            user=user,
-            recipe=recipe
-        ).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return add_or_delete(request, CartShopping, pk)
 
     @action(
         detail=False,
@@ -180,21 +139,21 @@ class RecipeViewSet(viewsets.ModelViewSet):
         user = request.user
         cart_list = AmountOfIngrediend.objects.filter(
             recipe__cart_shoppings__user=user
-        ).values_list(
+        ).values(
             'ingredient__name',
             'ingredient__measurement_unit',
             'amount'
-        )
-        for item in cart_list:
-            name = item[0]
-            if name not in unit_sum_dict:
-                unit_sum_dict[name] = {
-                    'measurement_unit': item[1],
-                    'amount': item[2]
-                }
-            else:
-                unit_sum_dict[name]['amount'] += item[2]
-        return download_page(unit_sum_dict)
+        ).annotate(amount=Sum('amount'))
+        # for item in cart_list:
+        #     name = item[0]
+        #     if name not in unit_sum_dict:
+        #         unit_sum_dict[name] = {
+        #             'measurement_unit': item[1],
+        #             'amount': item[2]
+        #         }
+        #     else:
+        #         unit_sum_dict[name]['amount'] += item[2]
+        return download_page(cart_list)
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)

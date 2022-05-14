@@ -1,11 +1,11 @@
 from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer
 from drf_extra_fields.fields import Base64ImageField
+from rest_framework import serializers
+
 from recipes.models import (AmountOfIngrediend, CartShopping, Favourite,
                             Ingredient, Recipe, Tag)
-from rest_framework import serializers
 from users.models import User
-
 from .fields import Hex2NameColor
 
 
@@ -54,22 +54,22 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return user.follower.filter(author=obj).exists()
 
 
-class SubscriptionsSerializer(serializers.ModelSerializer):
+class SubscriptionsSerializer(RecipeUser):
     is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = (
-            'email',
-            'id',
-            'username',
-            'first_name',
-            'last_name',
-            'recipes',
-            'is_subscribed',
-            'recipes_count'
+        exclude = (
+            "last_login",
+            "is_superuser",
+            "is_staff",
+            "is_active",
+            "date_joined",
+            "password",
+            "groups",
+            "user_permissions"
         )
 
     def get_recipes(self, obj):
@@ -210,35 +210,11 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializerGet(RecipeSerializer):
-    # image = Base64ImageField()
-    tags = TagSerializer(read_only=True, many=True)
-    # author = UserSerializer(read_only=True)
-    # ingredients = IngredientForRecipeCreate(
-    #     source='amountofingrediend_set',
-    #     read_only=True,
-    #     many=True
-    # )
-    # is_favorited = serializers.SerializerMethodField()
-    # is_in_shopping_cart = serializers.SerializerMethodField()
+    tags = TagSerializer(
+        read_only=True,
+        many=True
+    )
 
     class Meta:
         model = Recipe
         fields = '__all__'
-
-    # def get_is_favorited(self, obj):
-    #     user = self.context.get('request').user
-    #     if user.is_anonymous:
-    #         return False
-    #     return Favourite.objects.filter(
-    #         user=user,
-    #         recipe=obj
-    #     ).exists()
-
-    # def get_is_in_shopping_cart(self, obj):
-    #     user = self.context.get('request').user
-    #     if user.is_anonymous:
-    #         return False
-    #     return CartShopping.objects.filter(
-    #         user=user,
-    #         recipe=obj
-    #     ).exists()

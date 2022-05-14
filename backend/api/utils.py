@@ -1,25 +1,16 @@
-
-
 from django.http import HttpResponse
-from recipes.models import Recipe
+from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
+from rest_framework import status
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
-from rest_framework import serializers
+
+from .serializers import RecipeUser
+from recipes.models import Recipe
 
 
-class RecipeUser(serializers.ModelSerializer):
-    class Meta:
-        model = Recipe
-        fields = (
-            'id',
-            'name',
-            'image',
-            'cooking_time'
-        )
-
-
-def download_page(unit_sum_dict):
+def download_page(cart_list):
     pdfmetrics.registerFont(
         TTFont('DejaVuSans', 'DejaVuSans.ttf', 'UTF-8'))
     response = HttpResponse(content_type='application/pdf')
@@ -32,7 +23,7 @@ def download_page(unit_sum_dict):
     page.drawString(200, 800, 'Список покупок')
     page.setFont('DejaVuSans', size=16)
     height = 750
-    for i, (name, data) in enumerate(unit_sum_dict.items(), 1):
+    for i, (name, data) in enumerate(cart_list, 1):
         page.drawString(75, height, (
             f'{i}. {name}: {data["amount"]}, '
             f'{data["measurement_unit"]}'))
@@ -40,3 +31,36 @@ def download_page(unit_sum_dict):
     page.showPage()
     page.save()
     return response
+
+
+def add_or_delete(request, model, obj_id):
+    user = request.user
+    if request.method == 'DELETE':
+        obj = model.objects.filter(
+            user=user,
+            recipe__id=obj_id
+        )
+        if obj.exists():
+            obj.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            status=status.HTTP_400_BAD_REQUEST)
+    if model.objects.filter(
+        user=user,
+        recipe__id=obj_id
+    ).exists():
+        return Response(
+            status=status.HTTP_400_BAD_REQUEST)
+    recipe = get_object_or_404(
+        Recipe,
+        id=obj_id
+    )
+    model.objects.create(
+        user=user,
+        recipe=recipe
+    )
+    serializer = RecipeUser(recipe)
+    return Response(
+        serializer.data,
+        status=status.HTTP_201_CREATED
+    )
