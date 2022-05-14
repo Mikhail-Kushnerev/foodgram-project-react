@@ -26,7 +26,7 @@ def download_page(cart_list):
     for i, ingredient in enumerate(cart_list, 1):
         page.drawString(75, height, (
             f'{i}. {ingredient["ingredient__name"]}: {ingredient["amount"]}, '
-            f'{ingredient["ingredient__measurement_unit__name"]}'))
+            f'{ingredient["ingredient__measurement_unit"]}'))
         height -= 25
     page.showPage()
     page.save()

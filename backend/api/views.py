@@ -140,9 +140,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ).values(
             'ingredient__name',
             'ingredient__measurement_unit'
-        ).order_by(
-            'ingredient__name',
-            'ingredient__measurement_unit__name'
         ).annotate(amount=Sum('amount'))
         # for item in cart_list:
         #     name = item[0]
