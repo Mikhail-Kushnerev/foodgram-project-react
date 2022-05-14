@@ -142,15 +142,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'ingredient__name',
             'ingredient__measurement_unit'
         ).annotate(amount=Sum('amount'))
-        # for item in cart_list:
-        #     name = item[0]
-        #     if name not in unit_sum_dict:
-        #         unit_sum_dict[name] = {
-        #             'measurement_unit': item[1],
-        #             'amount': item[2]
-        #         }
-        #     else:
-        #         unit_sum_dict[name]['amount'] += item[2]
         return download_page(cart_list)
 
     def perform_create(self, serializer):
