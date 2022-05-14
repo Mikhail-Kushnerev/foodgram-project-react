@@ -23,10 +23,10 @@ def download_page(cart_list):
     page.drawString(200, 800, 'Список покупок')
     page.setFont('DejaVuSans', size=16)
     height = 750
-    for i, (name, data) in enumerate(cart_list, 1):
+    for i, ingredient in enumerate(cart_list, 1):
         page.drawString(75, height, (
-            f'{i}. {name}: {data["amount"]}, '
-            f'{data["measurement_unit"]}'))
+            f'{i}. {ingredient["ingredient__name"]}: {ingredient["amount"]}, '
+            f'{ingredient["ingredient__measurement_unit__name"]}'))
         height -= 25
     page.showPage()
     page.save()

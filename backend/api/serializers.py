@@ -199,7 +199,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-        ingredients_data = validated_data.pop('amountofingrediend_set')
+        ingredients_data = validated_data.pop('ingredients')
         super().update(instance, validated_data)
         AmountOfIngrediend.objects.filter(
             recipe=instance
