@@ -139,8 +139,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             recipe__cart_shoppings__user=user
         ).values(
             'ingredient__name',
-            'ingredient__measurement_unit',
-            'amount'
+            'ingredient__measurement_unit'
         ).order_by(
             'ingredient__name',
             'ingredient__measurement_unit__name'
