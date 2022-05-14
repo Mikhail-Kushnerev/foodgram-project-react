@@ -1,17 +1,88 @@
 from django.shortcuts import get_object_or_404
+from djoser.views import UserViewSet
 from recipes.models import (AmountOfIngrediend, CartShopping, Favourite,
                             Ingredient, Recipe, Tag)
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
+# from .serializers import CustomUserSerializer, SubscriptionsSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from users.serializers import RecipeUser
+from users.models import Subscription, User
 
 from .filters import IngredientFilter, UserRecipeFilter
 from .pagination import PageNumberPagination
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
-from .serializers import IngredientSerializer, RecipeSerializer, TagSerializer
+from .serializers import (CustomUserSerializer, IngredientSerializer,
+                          RecipeSerializer, RecipeSerializerGet, RecipeUser,
+                          SubscriptionsSerializer, TagSerializer)
 from .utils import download_page
+
+
+class UserViewset(UserViewSet):
+    queryset = User.objects.all()
+    serializer_class = CustomUserSerializer
+    pagination_class = PageNumberPagination
+
+    @action(
+        methods=['post', 'delete'],
+        detail=True,
+        url_path='subscribe',
+        permission_classes=(IsAuthenticated,),
+    )
+    def subscribe(self, request, id=None):
+        user = request.user
+        author = get_object_or_404(
+            User,
+            id=self.kwargs.get('id')
+        )
+        if request.method == 'POST':
+            subscription = Subscription.objects.create(
+                user=user,
+                author=author
+            )
+            serializer = SubscriptionsSerializer(
+                subscription.author,
+                context={'request': request}
+            )
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED
+            )
+        Subscription.objects.filter(
+            user=user,
+            author=author
+        ).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(
+        detail=False,
+        url_path='subscriptions',
+        permission_classes=(IsAuthenticated,),
+    )
+    def subscriptions(self, request):
+        user = request.user
+        user = get_object_or_404(
+            User,
+            id=user.id
+        )
+        queryset = [i.author for i in user.follower.all()]
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = SubscriptionsSerializer(
+                page,
+                many=True,
+                context={'request': request},
+            )
+            return self.get_paginated_response(serializer.data)
+        serializer = SubscriptionsSerializer(
+            queryset,
+            many=True,
+            context={'request': request},
+        )
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK
+        )
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -33,6 +104,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
     filter_class = UserRecipeFilter
     permission_classes = (IsAuthorOrReadOnly,)
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return RecipeSerializerGet
+        return RecipeSerializer
 
     @action(
         methods=['post', 'delete'],

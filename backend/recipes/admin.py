@@ -1,4 +1,4 @@
-from api.utils import IngredientFilter
+from api.filters import IngredientFilter
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 

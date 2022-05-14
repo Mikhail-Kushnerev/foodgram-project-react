@@ -1,23 +1,11 @@
-import webcolors
-from django.contrib import admin
+
+
 from django.http import HttpResponse
 from recipes.models import Recipe
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from rest_framework import serializers
-
-
-class Hex2NameColor(serializers.Field):
-    def to_representation(self, value):
-        return value
-
-    def to_internal_value(self, data):
-        try:
-            data = webcolors.hex_to_name(data)
-        except ValueError:
-            raise serializers.ValidationError('Для этого цвета нет имени')
-        return data
 
 
 class RecipeUser(serializers.ModelSerializer):
@@ -29,21 +17,6 @@ class RecipeUser(serializers.ModelSerializer):
             'image',
             'cooking_time'
         )
-
-
-class IngredientFilter(admin.SimpleListFilter):
-
-    title = 'Ингредиенты'
-    parameter_name = 'ингредиенты_категории'
-
-    def lookups(self, request, model_admin):
-        pattern = 'абвгдеёжзийклмнопрстуфхцчшщэюя'
-        return [(i, i) for i in pattern]
-
-    def queryset(self, request, queryset):
-        if self.value():
-            queryset = queryset.filter(name__startswith=self.value())
-        return queryset
 
 
 def download_page(unit_sum_dict):

@@ -1,3 +1,4 @@
+from django.contrib import admin
 from django_filters.rest_framework import FilterSet, filters
 from recipes.models import Ingredient, Recipe, Tag
 
@@ -42,4 +43,19 @@ class UserRecipeFilter(FilterSet):
             queryset = queryset.filter(
                 cart_shoppings__user=self.request.user
             )
+        return queryset
+
+
+class IngredientFilter(admin.SimpleListFilter):
+
+    title = 'Ингредиенты'
+    parameter_name = 'ингредиенты_категории'
+
+    def lookups(self, request, model_admin):
+        pattern = 'абвгдеёжзийклмнопрстуфхцчшщэюя'
+        return [(i, i) for i in pattern]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            queryset = queryset.filter(name__startswith=self.value())
         return queryset

@@ -18,10 +18,15 @@ class Recipe(models.Model):
         upload_to='recipes/',
         blank=False
     )
-    tags = models.ManyToManyField('Tag')
+    tags = models.ManyToManyField(
+        'Tag',
+        # related_name='recipes',
+        blank=False
+    )
     ingredients = models.ManyToManyField(
         'Ingredient',
-        through='AmountOfIngrediend'
+        through='AmountOfIngrediend',
+        # related_name="recipes"
     )
 
     class Meta:
@@ -59,11 +64,13 @@ class Ingredient(models.Model):
 class AmountOfIngrediend(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        # related_name='ingredients_amount',
     )
     recipe = models.ForeignKey(
         Recipe,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        # related_name='recipe_ingredients',
     )
     amount = models.IntegerField(
         default=1,
