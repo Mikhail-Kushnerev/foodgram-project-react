@@ -7,6 +7,7 @@ from users.models import User
 class Recipe(models.Model):
     name = models.CharField(
         max_length=200,
+        verbose_name='Наименование рецепта'
     )
     text = models.TextField(verbose_name='Описание рецепта')
     cooking_time = models.IntegerField(verbose_name='Время приготовления')
@@ -29,7 +30,7 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(
         'Ingredient',
         through='AmountOfIngrediend',
-        verbose_name='Ингридиенты(и) рецепта'
+        verbose_name='Ингридиент(ы) рецепта'
     )
 
     class Meta:
@@ -64,7 +65,7 @@ class Ingredient(models.Model):
     class Meta:
         ordering = ['name']
         verbose_name = 'Ингридиент'
-        verbose_name_plural = 'Ингридиент'
+        verbose_name_plural = 'Ингридиенты'
 
     def __str__(self):
         return self.name
@@ -79,7 +80,7 @@ class AmountOfIngrediend(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        verbose_name='рецепта'
+        verbose_name='рецепт'
     )
     amount = models.IntegerField(
         default=1,

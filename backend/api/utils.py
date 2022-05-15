@@ -7,7 +7,6 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from recipes.models import Recipe
-
 from .serializers import RecipeUser
 
 
@@ -25,9 +24,10 @@ def download_page(cart_list):
     page.setFont('DejaVuSans', size=16)
     height = 750
     for i, ingredient in enumerate(cart_list, 1):
-        page.drawString(75, height, (
-            f'{i}. {ingredient["ingredient__name"]}: {ingredient["amount"]}, '
-            f'{ingredient["ingredient__measurement_unit"]}'))
+        name = ingredient["ingredient__name"]
+        amount = ingredient["sum_amount"]
+        unit = ingredient["ingredient__measurement_unit"]
+        page.drawString(75, height, (f'{i}. {name}: {amount}, {unit}'))
         height -= 25
     page.showPage()
     page.save()

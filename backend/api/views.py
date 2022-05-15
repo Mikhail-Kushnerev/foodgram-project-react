@@ -6,16 +6,26 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from recipes.models import (AmountOfIngrediend, CartShopping, Favourite,
-                            Ingredient, Recipe, Tag)
+from recipes.models import (
+    AmountOfIngrediend,
+    CartShopping,
+    Favourite,
+    Ingredient,
+    Recipe,
+    Tag
+)
 from users.models import Subscription, User
-
 from .filters import IngredientFilter, UserRecipeFilter
 from .pagination import PageNumberPagination
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
-from .serializers import (CustomUserSerializer, IngredientSerializer,
-                          RecipeSerializer, RecipeSerializerGet,
-                          SubscriptionsSerializer, TagSerializer)
+from .serializers import (
+    CustomUserSerializer,
+    IngredientSerializer,
+    RecipeSerializer,
+    RecipeSerializerGet,
+    SubscriptionsSerializer,
+    TagSerializer
+)
 from .utils import add_or_delete, download_page
 
 
@@ -141,7 +151,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ).values(
             'ingredient__name',
             'ingredient__measurement_unit'
-        ).annotate(amount=Sum('amount'))
+        ).annotate(sum_amount=Sum('amount'))
         return download_page(cart_list)
 
     def perform_create(self, serializer):
