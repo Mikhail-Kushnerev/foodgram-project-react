@@ -124,6 +124,7 @@ class IngredientForRecipeCreate(serializers.ModelSerializer):
             'measurement_unit'
         )
 
+
 class IngredientWriteSerializer(serializers.ModelSerializer):
     amount = serializers.IntegerField(write_only=True)
     id = serializers.IntegerField(write_only=True)
@@ -218,7 +219,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         ingredients = validated_data.pop('ingredients')
         tags_data = validated_data.pop('tags')
         recipe = Recipe.objects.create(
-            # author=request.user, 
+            # author=request.user,
             **validated_data)
         recipe.tags.set(tags_data)
         for ingredient in ingredients:
