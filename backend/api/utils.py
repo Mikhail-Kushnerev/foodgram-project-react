@@ -30,7 +30,7 @@ def download_page(cart_list):
         page.drawString(75, height, (f'{i}. {name}: {amount}, {unit}'))
         height -= 25
         page.showPage()
-    page.save()
+        page.save()
     return response
 
 
