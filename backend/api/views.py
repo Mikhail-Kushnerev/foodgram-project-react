@@ -164,16 +164,17 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'filename="shopping_list.pdf"'
         )
         page = canvas.Canvas(response)
+        page.drawCentredString(300, 700, 'Список покупок')
+        pdfmetrics.registerFont(TTFont('DejaVuSans', 'DejaVuSans.ttf'))
         page.setFont('DejaVuSans', size=24)
-        page.drawString(200, 800, 'Список покупок')
-        page.setFont('DejaVuSans', size=16)
-        height = 750
+        page.line(30, 710, 565, 710)
+        height = 650
         for i, ingredient in enumerate(cart_list, 1):
             name = ingredient["ingredient__name"]
             amount = ingredient["sum_amount"]
             unit = ingredient["ingredient__measurement_unit"]
-            page.drawString(75, height, (f'{i}. {name}: {amount}, {unit}'))
-            height -= 25
+            page.drawString(40, height, (f'{i}. {name}: {amount}, {unit}'))
+            height -= 50
         page.showPage()
         page.save()
         return response
