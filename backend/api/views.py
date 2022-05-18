@@ -202,7 +202,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         # # page.setPageSize(A4)
         # page.save()
         response = HttpResponse(
-            bytes(pdf.output()),
+            pdf.output(),
             content_type='application/pdf'
         )
         response['Content-Disposition'] = (
