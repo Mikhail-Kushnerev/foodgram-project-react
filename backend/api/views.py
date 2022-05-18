@@ -157,17 +157,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'ingredient__name',
             'ingredient__measurement_unit'
         ).annotate(sum_amount=Sum('amount'))
-        # page.add_font(
-        #     family='DejaVuSans',
-        #     style='',
-        #     fname=os.path.join(
-        #         os.path.dirname(
-        #             os.path.abspath(__file__)
-        #         ), 'DejaVuSans-Oblique.ttf'
-        #     ),
-        #     uni=True
-        # )
-        # page.set_font('DejaVuSans', size=25)
         list_cart = []
         for n, ingredient in enumerate(cart_list, start=1):
             name = ingredient["ingredient__name"]
@@ -179,15 +168,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 f'{amount} '
                 f'{unit}\n',
             )
-            # page.cell(
-            #     0, 10,
-            # f'{n}. '
-            # f'{name} '
-            # f'{amount} '
-            # f'{unit}',
-            #     ln=1,
-            #     align='C'
-            # )
         response = HttpResponse(
             list_cart,
             content_type='text/plain'
