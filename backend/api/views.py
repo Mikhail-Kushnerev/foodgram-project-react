@@ -181,10 +181,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
             )
             # page.cell(
             #     0, 10,
-                # f'{n}. '
-                # f'{name} '
-                # f'{amount} '
-                # f'{unit}',
+            # f'{n}. '
+            # f'{name} '
+            # f'{amount} '
+            # f'{unit}',
             #     ln=1,
             #     align='C'
             # )
