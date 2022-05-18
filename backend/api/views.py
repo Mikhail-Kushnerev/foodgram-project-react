@@ -1,6 +1,10 @@
 from django.db.models import Sum
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen import canvas
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -152,7 +156,27 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'ingredient__name',
             'ingredient__measurement_unit'
         ).annotate(sum_amount=Sum('amount'))
-        return download_page(cart_list)
+        pdfmetrics.registerFont(
+            TTFont('DejaVuSans', 'DejaVuSans.ttf', 'UTF-8'))
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = (
+            'attachment; '
+            'filename="shopping_list.pdf"'
+        )
+        page = canvas.Canvas(response)
+        page.setFont('DejaVuSans', size=24)
+        page.drawString(200, 800, 'Список покупок')
+        page.setFont('DejaVuSans', size=16)
+        height = 750
+        for i, ingredient in enumerate(cart_list, 1):
+            name = ingredient["ingredient__name"]
+            amount = ingredient["sum_amount"]
+            unit = ingredient["ingredient__measurement_unit"]
+            page.drawString(75, height, (f'{i}. {name}: {amount}, {unit}'))
+            height -= 25
+        page.showPage()
+        page.save()
+        return response
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
