@@ -174,7 +174,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
             unit = ingredient["ingredient__measurement_unit"]
             page.drawString(75, height, (f'{i}. {name}: {amount}, {unit}'))
             height -= 25
-            page.showPage()
+            if page.setOutlineNames0:
+                page.showPage()        
+        page.showPage()
         page.save()
         return response
 
