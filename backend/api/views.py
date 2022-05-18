@@ -181,8 +181,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 f'{ingredient["ingredient__name"]} '
                 f'{ingredient["sum_amount"]} '
                 f'{ingredient["ingredient__measurement_unit"]}',
-                # ln=1,
-                # align='C'
+                new_x='LMARGIN',
+                new_y='NEXT'
             )
         # response = HttpResponse(
         #     # str(page.output()),
