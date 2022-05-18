@@ -1,4 +1,4 @@
-import os
+from os.path import abspath, dirname, join
 
 from django.db.models import Sum
 from django.http import HttpResponse
@@ -149,45 +149,30 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
-        user = request.user
-        cart_list = AmountOfIngrediend.objects.filter(
-            recipe__cart_shoppings__user=user
-        ).values(
-            'ingredient__name',
-            'ingredient__measurement_unit'
-        ).annotate(sum_amount=Sum('amount'))
-        page = FPDF(
-            format='A4'
-        )
-        page.add_page()
-        page.add_font(
-            family='DejaVuSans',
-            style='',
-            fname=os.path.join(
-                os.path.dirname(
-                    os.path.abspath(__file__)
-                ), 'DejaVuSans-Oblique.ttf'
-            ),
-            # uni=True
-        )
-        page.set_font('DejaVuSans', size=25)
-        for n, ingredient in enumerate(cart_list, start=1):
-            # name = ingredient["ingredient__name"]
-            # amount = ingredient["sum_amount"]
-            # unit = ingredient["ingredient__measurement_unit"]
-            page.cell(
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.add_font(
+            'DejaVuSans-Oblique',
+            fname=join(dirname(abspath(__file__)), 'DejaVuSans-Oblique.ttf'))
+        pdf.set_font('DejaVuSans-Oblique', size=25)
+        ingredients = AmountOfIngrediend.objects.filter(
+            recipe__cart__user=request.user.id).values(
+                'ingredient__name',
+                'ingredient__measurement_unit__name').order_by(
+                    'ingredient__name',
+                    'ingredient__measurement_unit__name').annotate(
+                    amount_sum=Sum('amount'))
+        for n, ingredient in enumerate(ingredients, start=1):
+            pdf.cell(
                 0, 10,
-                f'{n}. '
-                f'{ingredient["ingredient__name"]} '
-                f'{ingredient["sum_amount"]} '
-                f'{ingredient["ingredient__measurement_unit"]}',
-                new_x='LMARGIN', new_y='NEXT'
-            )
+                f'{n}. {ingredient["ingredient__name"]} '
+                f'{ingredient["amount_sum"]} '
+                f'{ingredient["ingredient__measurement_unit__name"]}',
+                new_x='LMARGIN', new_y='NEXT')
         response = HttpResponse(
-            bytes(page.output()),
-            content_type='application/pdf'
-        )
-        response['Content-Disposition'] = 'filename=shopping_list.pdf'
+            bytes(pdf.output()), content_type='application/pdf')
+        response['Content-Disposition'] = (
+            'attachment; filename="shopping_cart.pdf"')
         return response
 
     def perform_create(self, serializer):
