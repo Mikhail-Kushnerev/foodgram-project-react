@@ -184,9 +184,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             str(page.output()),
             content_type='application/pdf'
         )
-        response['Content-Disposition'] = (
-            'attachment; filename="shopping_list.pdf"'
-        )
+        response['Content-Disposition'] = 'filename=shopping_list.pdf'
         return response
 
     def perform_create(self, serializer):
