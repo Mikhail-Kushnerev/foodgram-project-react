@@ -1,7 +1,10 @@
+import os
+
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
+from fpdf import FPDF
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -146,10 +149,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
-        # page = FPDF(
-        #     format='A4'
-        # )
-        # page.add_page()
+        page = FPDF(
+            format='A4'
+        )
+        page.add_page()
         user = request.user
         cart_list = AmountOfIngrediend.objects.filter(
             recipe__cart_shoppings__user=user
@@ -157,52 +160,37 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'ingredient__name',
             'ingredient__measurement_unit'
         ).annotate(sum_amount=Sum('amount'))
-        # page.add_font(
-        #     family='DejaVuSans',
-        #     style='',
-        #     fname=os.path.join(
-        #         os.path.dirname(
-        #             os.path.abspath(__file__)
-        #         ), 'DejaVuSans-Oblique.ttf'
-        #     ),
-        #     uni=True
-        # )
-        # page.set_font('DejaVuSans', size=25)
-        list_cart = []
+        page.add_font(
+            family='DejaVuSans',
+            style='',
+            fname=os.path.join(
+                os.path.dirname(
+                    os.path.abspath(__file__)
+                ), 'DejaVuSans-Oblique.ttf'
+            ),
+            uni=True
+        )
+        page.set_font('DejaVuSans', size=25)
         for n, ingredient in enumerate(cart_list, start=1):
-            # name = ingredient["ingredient__name"]
-            # amount = ingredient["sum_amount"]
-            # unit = ingredient["ingredient__measurement_unit"]
-            list_cart.append(
+            name = ingredient["ingredient__name"]
+            amount = ingredient["sum_amount"]
+            unit = ingredient["ingredient__measurement_unit"]
+            page.cell(
+                0, 10,
                 f'{n}. '
-                f'{ingredient["ingredient__name"]} '
-                f'{ingredient["sum_amount"]} '
-                f'{ingredient["ingredient__measurement_unit"]}'
+                f'{name} '
+                f'{amount} '
+                f'{unit}',
+                new_x='LMARGIN',
+                new_y='NEXT'
             )
-            # page.cell(
-            #     0, 10,
-            #     f'{n}. '
-            #     f'{ingredient["ingredient__name"]} '
-            #     f'{ingredient["sum_amount"]} '
-            #     f'{ingredient["ingredient__measurement_unit"]}',
-            #     new_x='LMARGIN',
-            #     new_y='NEXT'
-            # )
-        # response = HttpResponse(
-        #     # str(page.output()),
-        #     content_type='application/pdf'
-        # )
-        # response['Content-Disposition'] = (
-        #     'attachment; '
-        #     'filename="shopping_list.pdf"'
-        # )
         response = HttpResponse(
-            list_cart,
-            content_type='text/plain'
+            page.output(),
+            content_type='application/pdf'
         )
         response['Content-Disposition'] = (
             'attachment; '
-            'filename="shopping_list.txt"'
+            'filename="shopping_list.pdf"'
         )
         return response
 
