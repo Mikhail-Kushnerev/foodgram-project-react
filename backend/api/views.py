@@ -190,7 +190,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             # )
         response = HttpResponse(
             list_cart,
-            content_type='plain/text'
+            content_type='text/plain'
         )
         response['Content-Disposition'] = (
             'attachment; '
