@@ -172,14 +172,18 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'ingredient__measurement_unit'
         ).annotate(sum_amount=Sum('amount'))
         for n, ingredient in enumerate(cart_list, start=1):
-            name = ingredient["ingredient__name"]
-            amount = ingredient["sum_amount"]
-            unit = ingredient["ingredient__measurement_unit"]
+            # name = ingredient["ingredient__name"]
+            # amount = ingredient["sum_amount"]
+            # unit = ingredient["ingredient__measurement_unit"]
             page.cell(
                 0, 10,
-                f'{n}. {name} {amount} {unit}',
+                f'{n}. '
+                f'{ingredient["ingredient__name"]} '
+                f'{ingredient["sum_amount"]} '
+                f'{ingredient["ingredient__measurement_unit"]}',
                 ln=1,
-                align='C')
+                align='C'
+            )
         response = HttpResponse(
             str(page.output()),
             content_type='application/pdf'
