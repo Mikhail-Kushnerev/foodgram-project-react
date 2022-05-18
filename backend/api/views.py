@@ -171,12 +171,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
             uni=True
         )
         page.set_font('DejaVuSans', size=25)
-        l = []
+        list_cart = []
         for n, ingredient in enumerate(cart_list, start=1):
             # name = ingredient["ingredient__name"]
             # amount = ingredient["sum_amount"]
             # unit = ingredient["ingredient__measurement_unit"]
-            l.append(
+            list_cart.append(
                 f'{n}. '
                 f'{ingredient["ingredient__name"]} '
                 f'{ingredient["sum_amount"]} '
@@ -200,7 +200,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         #     'filename="shopping_list.pdf"'
         # )
         response = HttpResponse(
-            l,
+            list_cart,
             content_type='text/plain'
         )
         response['Content-Disposition'] = (
