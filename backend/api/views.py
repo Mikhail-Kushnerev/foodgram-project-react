@@ -176,6 +176,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             height -= 25
             if height is False:
                 page.showPage()
+                height = 750
                 # page.save()
         page.showPage()
         # page.setPageSize(A4)
