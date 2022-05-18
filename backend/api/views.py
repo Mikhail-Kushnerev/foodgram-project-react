@@ -181,7 +181,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 ln=1,
                 align='C')
         response = HttpResponse(
-            page.output(),
+            str(page.output()),
             content_type='application/pdf'
         )
         response['Content-Disposition'] = (
