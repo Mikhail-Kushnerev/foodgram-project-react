@@ -149,10 +149,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
-        page = FPDF(
-            format='A4'
-        )
-        page.add_page()
+        # page = FPDF(
+        #     format='A4'
+        # )
+        # page.add_page()
         user = request.user
         cart_list = AmountOfIngrediend.objects.filter(
             recipe__cart_shoppings__user=user
@@ -160,37 +160,44 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'ingredient__name',
             'ingredient__measurement_unit'
         ).annotate(sum_amount=Sum('amount'))
-        page.add_font(
-            family='DejaVuSans',
-            style='',
-            fname=os.path.join(
-                os.path.dirname(
-                    os.path.abspath(__file__)
-                ), 'DejaVuSans-Oblique.ttf'
-            ),
-            uni=True
-        )
-        page.set_font('DejaVuSans', size=25)
+        # page.add_font(
+        #     family='DejaVuSans',
+        #     style='',
+        #     fname=os.path.join(
+        #         os.path.dirname(
+        #             os.path.abspath(__file__)
+        #         ), 'DejaVuSans-Oblique.ttf'
+        #     ),
+        #     uni=True
+        # )
+        # page.set_font('DejaVuSans', size=25)
+        list_cart = []
         for n, ingredient in enumerate(cart_list, start=1):
             name = ingredient["ingredient__name"]
             amount = ingredient["sum_amount"]
             unit = ingredient["ingredient__measurement_unit"]
-            page.cell(
-                0, 10,
+            list_cart.append(
                 f'{n}. '
                 f'{name} '
                 f'{amount} '
-                f'{unit}',
-                ln=1,
-                align='C'
+                f'{unit}\n',
             )
+            # page.cell(
+            #     0, 10,
+                # f'{n}. '
+                # f'{name} '
+                # f'{amount} '
+                # f'{unit}',
+            #     ln=1,
+            #     align='C'
+            # )
         response = HttpResponse(
-            page.output(),
-            content_type='application/pdf'
+            list_cart,
+            content_type='plain/text'
         )
         response['Content-Disposition'] = (
             'attachment; '
-            'filename="shopping_list.pdf"'
+            'filename="shopping_list.txt"'
         )
         return response
 
