@@ -176,7 +176,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             page.cell(
                 0, 10,
                 f'{n}. {name} {amount} {unit}',
-                ln='1',
+                ln=1,
                 align='C')
         response = HttpResponse(
             bytes(page.output()),
