@@ -176,34 +176,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 0, 10,
                 f'{n}. {name} {amount} {unit}',
                 ln=1, align="C")
-        # pdfmetrics.registerFont(
-        #     TTFont('DejaVuSans', 'DejaVuSans.ttf'))
-        # response = HttpResponse(content_type='application/pdf')
-        # response['Content-Disposition'] = (
-        #     'attachment; '
-        #     'filename="shopping_list.pdf"'
-        # )
-        # page = canvas.Canvas(response)
-        # page.setFont('DejaVuSans', size=24)
-        # page.drawString(200, 800, 'Список покупок')
-        # page.setFont('DejaVuSans', size=16)
-        # height = 750
-        # for i, ingredient in enumerate(cart_list, 1):
-        #     name = ingredient["ingredient__name"]
-        #     amount = ingredient["sum_amount"]
-        #     unit = ingredient["ingredient__measurement_unit"]
-        #     page.drawString(75, height, (f'{i}. {name}: {amount}, {unit}'))
-        #     height -= 25
-        #     if height is False:
-        #         page.showPage()
-        #         page.save()
-        #         height = 750
-        #         # page.save()
-        # page.showPage()
-        # # page.setPageSize(A4)
-        # page.save()
         response = HttpResponse(
-            str(page.output()),
+            page.output(),
             content_type='application/pdf'
         )
         response['Content-Disposition'] = (
