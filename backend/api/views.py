@@ -181,8 +181,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 f'{name} '
                 f'{amount} '
                 f'{unit}',
-                new_x='LMARGIN',
-                new_y='NEXT'
+                ln=1,
+                align='C'
             )
         response = HttpResponse(
             page.output(),
