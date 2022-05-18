@@ -149,18 +149,19 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
-        page = FPDF()
-        page.add_page()
-        page.add_font(
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.add_font(
             'DejaVuSans',
             fname=os.path.join(
                 os.path.dirname(
                     os.path.abspath(__file__)
-                ), 'DejaVuSans.ttf'
+                ),
+                'DejaVuSans.ttf'
             ),
             uni=True
         )
-        page.set_font('DejaVuSans', size=25)
+        pdf.set_font('DejaVuSans', size=25)
         user = request.user
         cart_list = AmountOfIngrediend.objects.filter(
             recipe__cart_shoppings__user=user
@@ -172,13 +173,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
             name = ingredient["ingredient__name"]
             amount = ingredient["sum_amount"]
             unit = ingredient["ingredient__measurement_unit"]
-            page.cell(
+            pdf.cell(
                 0, 10,
                 f'{n}. {name} {amount} {unit}',
                 ln='1',
-                align='C')
+                align='C'
+            )
         response = HttpResponse(
-            page.output('shopping_list.pdf'),
+            pdf.output(),
             content_type='application/pdf'
         )
         response['Content-Disposition'] = (
