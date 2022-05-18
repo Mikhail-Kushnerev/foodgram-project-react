@@ -149,7 +149,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
-        page = FPDF()
+        page = FPDF(
+            format='A4'
+        )
         page.add_page()
         page.add_font(
             family='DejaVuSans',
