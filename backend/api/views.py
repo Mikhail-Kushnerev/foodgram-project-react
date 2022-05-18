@@ -1,7 +1,10 @@
+import os
+
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
+from fpdf import FPDF
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
@@ -149,6 +152,17 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
+        pdf = FPDF()
+        pdf.add_page()
+        # pdf.add_font(
+        #     'DejaVuSans',
+        #     fname=os.path.join(
+        #         os.path.dirname(
+        #             os.path.abspath(__file__)
+        #         ), 'DejaVuSans.ttf'
+        #     )
+        # )
+        pdf.set_font('DejaVuSans', size=25)
         user = request.user
         cart_list = AmountOfIngrediend.objects.filter(
             recipe__cart_shoppings__user=user
@@ -156,31 +170,47 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'ingredient__name',
             'ingredient__measurement_unit'
         ).annotate(sum_amount=Sum('amount'))
-        pdfmetrics.registerFont(
-            TTFont('DejaVuSans', 'DejaVuSans.ttf'))
-        response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = (
-            'attachment; '
-            'filename="shopping_list.pdf"'
-        )
-        page = canvas.Canvas(response)
-        page.setFont('DejaVuSans', size=24)
-        page.drawString(200, 800, 'Список покупок')
-        page.setFont('DejaVuSans', size=16)
-        height = 750
-        for i, ingredient in enumerate(cart_list, 1):
+        for n, ingredient in enumerate(cart_list, start=1):
             name = ingredient["ingredient__name"]
             amount = ingredient["sum_amount"]
             unit = ingredient["ingredient__measurement_unit"]
-            page.drawString(75, height, (f'{i}. {name}: {amount}, {unit}'))
-            height -= 25
-            if height is False:
-                page.showPage()
-                height = 750
-                # page.save()
-        page.showPage()
-        # page.setPageSize(A4)
-        page.save()
+            pdf.cell(
+                0, 10,
+                f'{n}. {name} {amount} {unit}',
+                new_x='LMARGIN', new_y='NEXT')
+        # pdfmetrics.registerFont(
+        #     TTFont('DejaVuSans', 'DejaVuSans.ttf'))
+        # response = HttpResponse(content_type='application/pdf')
+        # response['Content-Disposition'] = (
+        #     'attachment; '
+        #     'filename="shopping_list.pdf"'
+        # )
+        # page = canvas.Canvas(response)
+        # page.setFont('DejaVuSans', size=24)
+        # page.drawString(200, 800, 'Список покупок')
+        # page.setFont('DejaVuSans', size=16)
+        # height = 750
+        # for i, ingredient in enumerate(cart_list, 1):
+        #     name = ingredient["ingredient__name"]
+        #     amount = ingredient["sum_amount"]
+        #     unit = ingredient["ingredient__measurement_unit"]
+        #     page.drawString(75, height, (f'{i}. {name}: {amount}, {unit}'))
+        #     height -= 25
+        #     if height is False:
+        #         page.showPage()
+        #         page.save()
+        #         height = 750
+        #         # page.save()
+        # page.showPage()
+        # # page.setPageSize(A4)
+        # page.save()
+        response = HttpResponse(
+            bytes(pdf.output()),
+            content_type='application/pdf'
+        )
+        response['Content-Disposition'] = (
+            'attachment; filename="shopping_list.pdf"'
+        )
         return response
 
     def perform_create(self, serializer):
