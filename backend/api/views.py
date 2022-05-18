@@ -30,7 +30,7 @@ from .serializers import (
     SubscriptionsSerializer,
     TagSerializer
 )
-from .utils import add_or_delete, download_page
+from .utils import add_or_delete
 
 
 class UserViewset(UserViewSet):
