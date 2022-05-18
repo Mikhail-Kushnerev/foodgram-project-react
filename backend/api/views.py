@@ -149,6 +149,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
+        page = FPDF(
+            format='A4'
+        )
         page.add_page()
         user = request.user
         cart_list = AmountOfIngrediend.objects.filter(
@@ -157,9 +160,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'ingredient__name',
             'ingredient__measurement_unit'
         ).annotate(sum_amount=Sum('amount'))
-        page = FPDF(
-            format='A4'
-        )
         page.add_font(
             family='DejaVuSans',
             style='',
