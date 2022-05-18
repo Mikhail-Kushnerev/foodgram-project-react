@@ -1,3 +1,5 @@
+import os
+
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -149,14 +151,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def download_shopping_cart(self, request):
         pdf = FPDF()
         pdf.add_page()
-        # pdf.add_font(
-        #     'DejaVuSans',
-        #     fname=os.path.join(
-        #         os.path.dirname(
-        #             os.path.abspath(__file__)
-        #         ), 'DejaVuSans.ttf'
-        #     )
-        # )
+        pdf.add_font(
+            'DejaVuSans',
+            fname=os.path.join(
+                os.path.dirname(
+                    os.path.abspath(__file__)
+                ), 'DejaVuSans.ttf'
+            )
+        )
         pdf.set_font('DejaVuSans', size=25)
         user = request.user
         cart_list = AmountOfIngrediend.objects.filter(
