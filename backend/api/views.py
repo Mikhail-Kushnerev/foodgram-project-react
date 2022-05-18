@@ -158,7 +158,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                     os.path.abspath(__file__)
                 ), 'DejaVuSans.ttf'
             ),
-            # uni=True
+            uni=True
         )
         page.set_font('DejaVuSans', size=25)
         user = request.user
@@ -175,9 +175,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
             page.cell(
                 0, 10,
                 f'{n}. {name} {amount} {unit}',
-                new_x='LMARGIN', new_y='NEXT')
+                ln='1',
+                align='C')
         response = HttpResponse(
-            page.output(),
+            page.output('shopping_list.pdf'),
             content_type='application/pdf'
         )
         response['Content-Disposition'] = (
