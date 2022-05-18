@@ -149,6 +149,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
+        user = request.user
+        cart_list = AmountOfIngrediend.objects.filter(
+            recipe__cart_shoppings__user=user
+        ).values(
+            'ingredient__name',
+            'ingredient__measurement_unit'
+        ).annotate(sum_amount=Sum('amount'))
         page = FPDF(
             format='A4'
         )
@@ -159,18 +166,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
             fname=os.path.join(
                 os.path.dirname(
                     os.path.abspath(__file__)
-                ), 'DejaVuSans.ttf'
+                ), 'DejaVuSans-Oblique.ttf'
             ),
-            uni=True
+            # uni=True
         )
         page.set_font('DejaVuSans', size=25)
-        user = request.user
-        cart_list = AmountOfIngrediend.objects.filter(
-            recipe__cart_shoppings__user=user
-        ).values(
-            'ingredient__name',
-            'ingredient__measurement_unit'
-        ).annotate(sum_amount=Sum('amount'))
         for n, ingredient in enumerate(cart_list, start=1):
             # name = ingredient["ingredient__name"]
             # amount = ingredient["sum_amount"]
@@ -181,11 +181,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 f'{ingredient["ingredient__name"]} '
                 f'{ingredient["sum_amount"]} '
                 f'{ingredient["ingredient__measurement_unit"]}',
-                ln=1,
-                align='C'
+                new_x='LMARGIN', new_y='NEXT'
             )
         response = HttpResponse(
-            str(page.output()),
+            bytes(page.output()),
             content_type='application/pdf'
         )
         response['Content-Disposition'] = 'filename=shopping_list.pdf'
