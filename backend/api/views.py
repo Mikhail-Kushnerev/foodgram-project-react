@@ -175,7 +175,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             page.drawString(75, height, (f'{i}. {name}: {amount}, {unit}'))
             height -= 25
             if page.setOutlineNames0:
-                page.showPage()        
+                page.showPage()  
         page.showPage()
         page.save()
         return response
