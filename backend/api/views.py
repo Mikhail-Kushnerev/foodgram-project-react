@@ -175,7 +175,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             page.cell(
                 0, 10,
                 f'{n}. {name} {amount} {unit}',
-                new_x='LMARGIN', new_y='NEXT')
+                ln=1, align="C")
         # pdfmetrics.registerFont(
         #     TTFont('DejaVuSans', 'DejaVuSans.ttf'))
         # response = HttpResponse(content_type='application/pdf')
