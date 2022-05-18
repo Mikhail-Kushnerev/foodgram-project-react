@@ -152,7 +152,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         page = FPDF()
         page.add_page()
         page.add_font(
-            'DejaVuSans',
+            family='DejaVuSans',
+            style='',
             fname=os.path.join(
                 os.path.dirname(
                     os.path.abspath(__file__)
@@ -178,7 +179,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 ln='1',
                 align='C')
         response = HttpResponse(
-            page.output(),
+            str(page.output()),
             content_type='application/pdf'
         )
         response['Content-Disposition'] = (
