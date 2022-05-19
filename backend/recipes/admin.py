@@ -8,7 +8,7 @@ from .models import (AmountOfIngrediend, CartShopping, Favourite, Ingredient,
 
 class IngredientAmountInLine(admin.TabularInline):
     model = AmountOfIngrediend
-    raw_id_fields = ['ingredients']
+    raw_id_fields = ['ingredient']
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
