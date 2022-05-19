@@ -6,6 +6,10 @@ from .models import (AmountOfIngrediend, CartShopping, Favourite, Ingredient,
                      Recipe, Tag)
 
 
+class IngredientAmountInLine(admin.TabularInline):
+    model = AmountOfIngrediend
+    raw_id_fields = ['ingredients']
+
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     list_display = (
@@ -38,6 +42,7 @@ class RecipeAdmin(admin.ModelAdmin):
         'get_text',
         'favorites_count'
     )
+    inlines = (IngredientAmountInLine,)
     list_filter = (
         'author',
         'tags'
