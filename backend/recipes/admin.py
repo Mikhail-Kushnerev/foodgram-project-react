@@ -6,10 +6,10 @@ from .models import (AmountOfIngrediend, CartShopping, Favourite, Ingredient,
                      Recipe, Tag)
 
 
-
 class IngredientAmountInLine(admin.TabularInline):
     model = AmountOfIngrediend
     raw_id_fields = ['ingredient']
+
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
